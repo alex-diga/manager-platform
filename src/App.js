@@ -3,11 +3,13 @@ import React, { Component } from 'react';
 import './App.scss';
 // import store from './store'
 import {Router} from './router/router'
+import {ConfigProvider } from 'antd'
+import zhCN from 'antd/es/locale-provider/zh_CN'
 
 class App extends Component {
   render() {
     return (
-		<div className="App"><Router /></div>
+      <ConfigProvider locale={zhCN}><div className="App"><Router /></div></ConfigProvider>
     );
   }
 }

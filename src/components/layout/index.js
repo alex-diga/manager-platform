@@ -31,11 +31,11 @@ class LayoutComponent extends Component {
 							</div> : null}
 							<CustomMenu />
 						</Sider>
-						<Layout>
-							<Affix className="PageHeaderBox" offsetTop={0} target={() => document.getElementsByClassName('App-contentMain')[0]}>
+						<Layout style={{overflow: 'hidden'}}>
+							{/* <Affix className="PageHeaderBox" offsetTop={0} target={() => document.getElementsByClassName('LayoutComponentBox')[0]}> */}
 					        	<HeaderCom toggle={this.toggle} history={this.props.history} />
-							</Affix>
-							<Content>
+							{/* </Affix> */}
+							<Content style={{overflowX: 'hidden', overflowY: 'auto'}}>
 								<ContentMain />
 							</Content>
 						</Layout>

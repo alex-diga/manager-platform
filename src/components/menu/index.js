@@ -1,99 +1,114 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ApiUtil from '../../utils/ApiUtil'
-import {Menu, Icon} from 'antd'
-import { routeMenus } from './menurouter'
+import { Menu, Icon } from 'antd'
+import { routeMenus, routeChild } from './menurouter'
 
 const MyIcon = Icon.createFromIconfontCN({
 	scriptUrl: '//at.alicdn.com/t/font_1505404_05g1zqob7406.js', // 在 iconfont.cn 上生成
 });
-  
+
 //此组件的意义就是将数据抽离出来，通过传递数据去渲染
 class CustomMenu extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			showKeyIndex: ['1'],
-			showMenuSub: []
+			dufaultKey: [],
+			dufaultSub: [],
+			routeMenuData: routeMenus
 		}
 	}
 	componentWillMount() {
-		this.getMenuList()
-		let pathName = window.location.pathname
-		if (pathName === '/page') {
-			pathName = '/page/home'
-		}
-		let arr = []
-		let arr1 = []
-		routeMenus.forEach(en => {
-			if (en.path && en.path === pathName) {
-				arr = [en.key]
-				this.setState({
-					showKeyIndex: arr,
-					showMenuSub: []
-				})
-			}
-			if (en.children) {
-				arr1 = [en.key]
-				en.children.forEach(ens => {
-					if (ens.path && ens.path === pathName) {
-						arr = [ens.key]
-						this.setState({
-							showKeyIndex: arr,
-							showMenuSub: arr1
-						})
-					}
-				})
-			}
-		})
-	}
-	getMenuList() {
-		ApiUtil.post("app.list",{},res => {
-			console.log(res.code)
-		})
-	}
-	handleClick = (e) => {
-		// console.log('click ', e);
-	}
-	renderSubMenu = ({key, icon, title, children}) => {
-		return (
-			<Menu.SubMenu key={key} title={<span>{icon && <MyIcon type={icon}></MyIcon>}<span>{title}</span></span>}>
-				{
-					children && children.map(item => {
-						return item.children && item.children.length > 0 ? this.renderSubMenu(item) : this.renderMenuItem(item)
+		ApiUtil.post("app.list", {}, res => {
+			if (res.code === '0') {
+				let child = []
+				res.data[0].children.forEach((en, index) => {
+					let childArr = []
+					routeChild.forEach((e, i) => {
+						let obj = e
+						obj.path= `${e.path}/${en.text}`
+						obj.key=`k2-${index}-${i}`
+						childArr.push(obj)
 					})
-				}
-			</Menu.SubMenu>
-		)
+					let data = {
+						title: en.text,
+						icon: 'iconshuqian',
+						key: `k2-${index}`,
+						children: childArr
+					}
+					child.push(data)
+				})
+				routeMenus[1].children = child
+				let obj = this.getDefaultMenu(routeMenus, [], '')
+				// console.log(obj)
+				this.setState({
+					dufaultKey: [obj.dufaultKey],
+					dufaultSub: obj.dufaultSub,
+					routeMenuData: routeMenus
+				})
+				// console.log(obj)
+			}
+		})
 	}
-	renderMenuItem = ({key, icon, title, path}) => {
-		return (
-			<Menu.Item key={key}>
-					{/*{icon && <Icon type={icon}/>}*/}
-					{/*<span>{title}</span>*/}
-				<Link to={path}>
-					{icon && <MyIcon type={icon}></MyIcon>}
-					<span>{title}</span>
-				</Link>
-			</Menu.Item>
-		)
+	getDefaultMenu(arr, sub, key) {
+		let path = window.location.pathname
+		for (let i = 0; i<arr.length; i++) {
+			let en = arr[i]
+			if (!en.children) {
+				if (en.path && en.path === path) {
+					key = en.key
+				} else {
+					sub.pop()
+				}
+			} else {
+				if (sub) {
+					sub.push(en.key)
+				}
+				this.getDefaultMenu(en.children, sub, key)
+			}
+		}
+		return {key: key, dufaultSub: sub}
+	}
+	getMenuNodes = (MenuList) => {
+		return MenuList.map(item => {
+			if (!item.children) {
+				return (
+					<Menu.Item key={item.key}>
+						<Link to={item.path}>
+							{item.icon && <MyIcon type={item.icon}></MyIcon>}
+							<span>{item.title}</span>
+						</Link>
+					</Menu.Item>
+				)
+			} else {
+				return (
+					<Menu.SubMenu
+						key={item.key}
+						title={
+							<span>
+								{item.icon && <MyIcon type={item.icon}></MyIcon>}
+								<span>{item.title}</span>
+							</span>
+						}>
+						{this.getMenuNodes(item.children)}
+					</Menu.SubMenu>
+				)
+			}
+		})
 	}
 	render() {
+		const { routeMenuData, dufaultKey, dufaultSub } = this.state
 		return (
-
-				<Menu
-					theme='light'
-					onClick={this.handleClick}
-					defaultOpenKeys={this.state.showMenuSub}
-					defaultSelectedKeys={this.state.showKeyIndex}
-					mode="inline"
-				>
-					{
-						routeMenus.map(item => {
-							return item.children && item.children.length > 0 ? this.renderSubMenu(item) : this.renderMenuItem(item)
-						})
-					}
-				</Menu>
+			<Menu
+				theme='light'
+				defaultOpenKeys={dufaultSub}
+				defaultSelectedKeys={dufaultKey}
+				mode="inline"
+			>
+				{
+					this.getMenuNodes(routeMenuData)
+				}
+			</Menu>
 		)
 	}
 }

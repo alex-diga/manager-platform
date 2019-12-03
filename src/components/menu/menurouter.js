@@ -1,5 +1,4 @@
-// import location from '../../src/assets/img/location_fill.svg'
-// import news_hot from '../../src/assets/img/news_hot_fill_light.svg'
+//设置侧边导航栏的menu
 export const routeMenus = [{
         title: '首页',
         icon: 'iconshuqian',
@@ -50,4 +49,32 @@ export const routeMenus = [{
             }
         ]
     },
+]
+
+export const routeChild = [
+    {
+        title: '限流设置',
+        icon: 'iconshuqian',
+        path: '/page/netmanage',
+    },
+    {
+        title: '接口管理',
+        icon: 'iconshuqian',
+        path: '/page/apimanage',
+    },
+    {
+        title: '权限管理',
+        icon: 'iconshuqian',
+        path: '/page/rolemanage',
+    },
+    {
+        title: '流量数据',
+        icon: 'iconshuqian',
+        path: '/page/netdata',
+    },
+    {
+        title: '接入方管理',
+        icon: 'iconshuqian',
+        path: '/page/entermanage',
+    }
 ]

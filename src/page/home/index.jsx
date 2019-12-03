@@ -10,7 +10,9 @@ class Home extends React.Component {
     componentDidMount() { }
     render() {
         return (
-            <div className="homePage">首页</div>
+            <div className="homePage">
+                <img src={require("../../assets/img/bg1.jpg")} alt="配置中心" className="imgbox"/>
+            </div>
         )
     }
 }
