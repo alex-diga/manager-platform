@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import { Button } from 'antd'
 import AddRole from './addRole'
 import EditRole from './editRole'
@@ -73,7 +74,7 @@ class RoleManage extends React.Component {
         let path = window.location.pathname.split('/')
         let quest = path[path.length-1]
         ApiUtil.post("role.listall", {}, res => {
-            if (res.code == '0') {
+            if (res.code === '0') {
                 this.setState({
                     rolesRows: res.data.rows
                 })
@@ -122,7 +123,7 @@ class RoleManage extends React.Component {
                                         </div>
                                         <div className="roleInfo">
                                             <span className="roles">添加时间:</span>
-                                            <span className="info">{item.gmtCreate}</span>
+                                            <span className="info">{moment(item.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}</span>
                                         </div>
                                         <div className="roleOperarion">
                                             <Button type="primary" size="small" onClick={this.showEdit.bind(this, item)}>修改</Button>

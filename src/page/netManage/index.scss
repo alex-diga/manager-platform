@@ -4,4 +4,54 @@
 	padding: 20px;
 	background-color: #fff;
 	border-radius: 8px;
+	.searchBox {
+		display: flex;
+		margin-bottom: 16px;
+		.settingButton {
+			color: #E6A23C;
+    		background: #fdf6ec;
+    		border-color: #f5dab1;
+		}
+		.searchInput {
+			width: 250px;
+		}
+		.selectBox {
+			width: 160px;
+		}
+		.searchItem + .searchItem {
+			margin-left: 4px;
+		}
+	}
+	.pageBox {
+		margin-top: 20px;
+	}
+}
+.netModalBox {
+	width: 720px;
+	.netFormBox {
+		.ant-form-item {
+			.ant-form-item-label {
+				text-align: left;
+			}
+		}	
+		.limitBox {
+			width: 100%;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+			.tip {
+				padding-bottom: 20px;
+				border-bottom: 1px solid #EBEEF5;
+			}
+		}
+		.formBox {
+			padding-top: 20px;
+			.ant-form-item {
+				margin: 0;
+			}
+			.ant-form-item + .ant-form-item{
+				margin-top: 24px;
+			}			
+		}
+	}
 }

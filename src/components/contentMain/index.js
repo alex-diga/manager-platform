@@ -17,12 +17,12 @@ class ContentMain extends React.Component {
 				<Switch>
 					{/* <Redirect from="/page" exact to="/page/home" /> */}
 					<Route path='/page/home' component={Home} />
-					<Route path='/page/netmanage' component={NetManage} />
-					<Route path='/page/netdata' component={NetData} />
-					<Route path='/page/apimanage' component={ApiManage} />
-					<Route path='/page/rolemanage' component={RoleManage} />
-					<Route path='/page/allscope' component={AllScope} />
-					<Route path='/page/entermanage' component={EnterManage} />
+					<Route path='/page/netmanage/:name' component={NetManage} />
+					<Route path='/page/netdata/:name' component={NetData} />
+					<Route path='/page/apimanage/:name' component={ApiManage} />
+					<Route path='/page/rolemanage/:name' component={RoleManage} />
+					<Route path='/page/allscope/:name' component={AllScope} />
+					<Route path='/page/entermanage/:name' component={EnterManage} />
 				</Switch>
 			</div>
 		)

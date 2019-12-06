@@ -26,7 +26,7 @@ var ApiUtil = (function(){
 
   // 测试环境
 	// var url = 'http://bbb.a.com:8070/api';
-  	var url = "http://172.20.1.237:8070/api"
+  	var url = "http://172.16.119.44:9090/api"
   
 	var app_key = 'test';
 	var secret = '123456';

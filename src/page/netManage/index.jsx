@@ -1,19 +1,39 @@
 import React from 'react'
+import { Button, Input, Select, Pagination, Table, Tag, message } from 'antd'
+import ApiUtil from '../../utils/ApiUtil'
+import NetModal from './netModal'
 import './index.scss'
-import { Button, Input, Select, Modal, Pagination } from 'antd'
 
 const { Option } = Select
-
 class NetManage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            pageSize: 8,
+            pageSize: 10,
             pageNum: 1,
-            pageTotal: 200
+            pageTotal: 1,
+            netKey: '',
+            selectStatus: null,
+            selectLimit: null,
+            searchState: false,
+            netTabList: [],
+            selectedRowKeys: [],
+            selectedBatchData: [],
+            showModal: false,
+            modalType: 'batch',
+            singleData: {}
         }
+        this.getNetTabList = this.getNetTabList.bind(this)
         this.changePageNum = this.changePageNum.bind(this)
         this.changePagSize = this.changePagSize.bind(this)
+        this.searchNetKey = this.searchNetKey.bind(this)
+        this.changeNetKey = this.changeNetKey.bind(this)
+        this.select1Change = this.select1Change.bind(this)
+        this.select2Change = this.select2Change.bind(this)
+        this.batchSettingFn = this.batchSettingFn.bind(this)
+        this.onTabSelectChange = this.onTabSelectChange.bind(this)
+        this.editNetManage = this.editNetManage.bind(this)
+        this.closeModal = this.closeModal.bind(this)
     }
     // 改变页码数
     changePageNum(page) {
@@ -21,45 +41,237 @@ class NetManage extends React.Component {
         this.setState({
             pageNum: page
         })
+        this.getNetTabList()
     }
     // 改变分页数
     changePagSize(current, size) {
-        console.log(current, size)
+        // console.log(current, size)
         this.setState({
-            pageNum: current,
+            pageNum: 1,
             pageSize: size
         })
+        this.getNetTabList()
     }
-    componentDidMount() { }
+    // 搜索
+    changeNetKey(e) {
+        this.setState({
+            netKey: e.target.value,
+            searchState: true
+        })
+    }
+    searchNetKey() {
+        if (this.state.searchState) {
+            this.getNetTabList()
+        }
+    }
+    select1Change(e) {
+        this.setState({
+            selectStatus: e,
+            searchState: true
+        })
+    }
+    select2Change(e) {
+        this.setState({
+            selectLimit: e,
+            searchState: true
+        })
+    }
+    closeModal(state) {
+        this.setState({
+            showModal: false
+        })
+        if (state) {
+            this.getNetTabList()
+        }
+    }
+    // 修改设置
+    editNetManage(data) {
+        console.log(data)
+        this.setState({
+            showModal: true,
+            modalType: 'single',
+            singleData: data,
+        })
+    }
+    // 批量设置
+    onTabSelectChange(selectedRowKeys) {
+        this.setState({
+            selectedRowKeys: selectedRowKeys
+        })
+    }
+    batchSettingFn() {
+        if (this.state.selectedRowKeys.length > 0) {
+            let arr = []
+            this.state.selectedRowKeys.forEach(en => {
+                arr.push(this.state.netTabList[en - 1])
+            })
+            this.setState({
+                showModal: true,
+                modalType: 'batch',
+                selectedBatchData: arr
+            })
+        } else {
+            message.warn("请勾选数据项")
+        }
+    }
+    getNetTabList() {
+        ApiUtil.post("app.limit.pagelist", {
+            name: this.state.netKey,
+            status: this.state.selectStatus,
+            limitType: this.state.selectLimit,
+            page: this.state.pageNum,
+            rows: this.state.pageSize,
+            app: this.props.match.params.name
+        }, res => {
+            if (res.code === '0') {
+                this.setState({
+                    netTabList: res.data.rows,
+                    searchState: false
+                })
+            }
+        })
+    }
+    componentDidMount() {
+        this.getNetTabList()
+    }
     render() {
-        const {pageSize, pageNum, pageTotal } = this.state
+        const options1 = [
+            {
+                value: null,
+                label: '全部'
+            },
+            {
+                value: '1',
+                label: '开启'
+            }, {
+                value: '0',
+                label: '关闭'
+            }
+        ]
+        const options2 = [
+            {
+                value: null,
+                label: '全部'
+            },
+            {
+                value: 'LIMIT',
+                label: '限流策略'
+            }, {
+                value: 'TOKEN_BUCKET',
+                label: '令牌桶策略'
+            }
+        ]
+        const columns = [
+            {
+                title: '接口名',
+                dataIndex: 'name',
+                width: '15%'
+            },
+            {
+                title: '版本号',
+                dataIndex: 'version',
+                width: '10%',
+                render: version =>
+                    <span>{version ? version : '--'}</span>
+            },
+            {
+                title: '每秒可处理请求数',
+                dataIndex: 'limitCount',
+                width: '10%',
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => a.limitCount - b.limitCount,
+            },
+            {
+                title: 'code',
+                dataIndex: 'limitCode',
+                width: '10%',
+                render: code =>
+                    <span>{code ? code : '--'}</span>
+            },
+            {
+                title: 'msg',
+                dataIndex: 'limitMsg',
+                width: '12%',
+                render: limitMsg =>
+                    <span>{limitMsg ? limitMsg : '--'}</span>
+            },
+            {
+                title: '令牌通容量',
+                dataIndex: 'tokenBucketCount',
+                width: '10%',
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => a.tokenBucketCount - b.tokenBucketCount,
+            },
+            {
+                title: '开启状态',
+                dataIndex: 'status',
+                width: '10%',
+                render: status => {
+                    let color = status === 1 ? '#87d068' : '#f50'
+                    return (<Tag color={color}>{status === 1 ? '开启' : '关闭'}</Tag>)
+                }
+            },
+            {
+                title: '当前策略',
+                dataIndex: 'limitType',
+                width: '10%',
+                render: limitType =>
+                    <span>{limitType === 'LIMIT' ? '限流策略' : '令牌桶策略'}</span>
+            },
+            {
+                title: '操作',
+                key: 'action',
+                render: (reocrd) =>
+                    netTabList.length > 0
+                        ? <Button type="primary" onClick={this.editNetManage.bind(this, reocrd)}>修改</Button>
+                        : null
+            },
+        ]
+        const { pageSize, pageNum, pageTotal, netTabList, selectedRowKeys,selectedBatchData, showModal, modalType, singleData } = this.state
+        const rowSelection = {
+            selectedRowKeys,
+            onChange: this.onTabSelectChange,
+        }
         return (
             <div className="netManagePage">
                 <div className="searchBox">
-                    <Button icon="edit" onClick={en => { console.log(en) }}>批量设置</Button>
-                    {/* <Input placeholder="请输入接口名" /> */}
-                    <Select defaultValue="lucy" style={{ width: 120 }}>
-                        <Option value="jack">Jack1</Option>
-                        <Option value="lucy">Lucy1</Option>
-                        <Option value="Yiminghe">yiminghe1</Option>
+                    <Button className="searchItem settingButton" icon="edit" onClick={this.batchSettingFn}>批量设置</Button>
+                    <Input className="searchItem searchInput" allowClear placeholder="请输入接口名" onChange={this.changeNetKey} value={this.state.netKey} />
+                    <Select className="searchItem selectBox" defaultValue="全部" onChange={this.select1Change}>
+                        {options1.map((en, index) => {
+                            return (
+                                <Option key={index} value={en.value}>{en.label}</Option>
+                            )
+                        })}
                     </Select>
-                    <Select defaultValue="lucy" style={{ width: 120 }}>
-                        <Option value="jack">Jack1</Option>
-                        <Option value="lucy">Lucy1</Option>
-                        <Option value="Yiminghe">yiminghe1</Option>
+                    <Select className="searchItem selectBox" defaultValue="全部" onChange={this.select2Change}>
+                        {options2.map((en, index) => {
+                            return (
+                                <Option key={index} value={en.value}>{en.label}</Option>
+                            )
+                        })}
                     </Select>
+                    <Button className="searchItem" icon="search" type="primary" onClick={this.searchNetKey}>搜索</Button>
                 </div>
+                <NetModal
+                    ref="netModalRef"
+                    match={this.props.match}
+                    closeModal={this.closeModal}
+                    showModal={showModal}
+                    selectedBatchData={selectedBatchData}
+                    singleData={singleData}
+                    modalType={modalType} />
+                <Table rowSelection={rowSelection} rowKey="id" bordered columns={columns} dataSource={netTabList} pagination={false} />
                 <div className="pageBox">
-                    <Pagination 
-                    defaultCurrent={pageNum} 
-                    pageSize={pageSize} 
-                    total={pageTotal} 
-                    pageSizeOptions={['8', '10', '20', '30', '40']}
-                    onChange={this.changePageNum} 
-                    onShowSizeChange={this.changePagSize}
-                    showTotal={total => `共 ${pageTotal} 条`}
-                    showSizeChanger 
-                    showQuickJumper />
+                    <Pagination
+                        defaultCurrent={pageNum}
+                        pageSize={pageSize}
+                        total={pageTotal}
+                        onChange={this.changePageNum}
+                        onShowSizeChange={this.changePagSize}
+                        showTotal={total => `共 ${pageTotal} 条`}
+                        showSizeChanger
+                        showQuickJumper />
                 </div>
             </div>
         )

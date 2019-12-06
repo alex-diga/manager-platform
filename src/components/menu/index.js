@@ -21,26 +21,26 @@ class CustomMenu extends React.Component {
 	componentWillMount() {
 		ApiUtil.post("app.list", {}, res => {
 			if (res.code === '0') {
+				let dataArr = res.data[0].children
 				let child = []
-				res.data[0].children.forEach((en, index) => {
+				for (let i =0; i< dataArr.length; i++) {
 					let childArr = []
-					routeChild.forEach((e, i) => {
-						let obj = e
-						obj.path= `${e.path}/${en.text}`
-						obj.key=`k2-${index}-${i}`
+					for (let j = 0; j < routeChild.length; j++) {
+						let obj = JSON.parse(JSON.stringify(routeChild[j]))
+						obj.path= `${routeChild[j].path}/${dataArr[i].text}`
+						obj.key=`k2-${i}-${j}`
 						childArr.push(obj)
-					})
+					}
 					let data = {
-						title: en.text,
+						title: dataArr[i].text,
 						icon: 'iconshuqian',
-						key: `k2-${index}`,
+						key: `k2-${i}`,
 						children: childArr
 					}
 					child.push(data)
-				})
+				}
 				routeMenus[1].children = child
 				let obj = this.getDefaultMenu(routeMenus, [], '')
-				// console.log(obj)
 				this.setState({
 					dufaultKey: [obj.dufaultKey],
 					dufaultSub: obj.dufaultSub,

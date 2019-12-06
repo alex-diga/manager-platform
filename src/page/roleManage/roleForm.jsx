@@ -9,7 +9,7 @@ class RoleForm extends React.Component {
         if (this.props.type === 'edit') {
             this.props.form.setFieldsValue({
                 roleCode: this.props.formData.roleCode,
-                    description: this.props.formData.description
+                description: this.props.formData.description
             })
         }
     }

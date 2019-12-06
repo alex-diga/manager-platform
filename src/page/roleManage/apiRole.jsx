@@ -1,14 +1,14 @@
 import React from 'react'
-import { Modal, Table, message  } from 'antd'
+import { Modal, Table, message, Spin } from 'antd'
 import ApiUtil from '../../utils/ApiUtil'
-import './index.scss'
 
 class RoleManage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             selectList: [],
-            roleCode: ''
+            roleCode: '',
+            loading: false
         }
         this.apiRoleModelhandleOk = this.apiRoleModelhandleOk.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
@@ -28,15 +28,21 @@ class RoleManage extends React.Component {
     }
     // 确定添加角色、修改角色信息
     apiRoleModelhandleOk() {
+        this.setState({
+            loading: true
+        })
         let path = window.location.pathname.split('/')
-        let quest = path[path.length-1]
-        ApiUtil.post("role.api.update",{
+        let quest = path[path.length - 1]
+        ApiUtil.post("role.api.update", {
             apiIds: this.state.selectList,
             roleCode: this.state.roleCode,
             app: quest
         }, res => {
             if (res.code === '0') {
                 message.success('修改接口权限成功')
+                this.setState({
+                    loading: false
+                })
                 this.handleCancel(true)
             }
         })
@@ -53,26 +59,28 @@ class RoleManage extends React.Component {
     componentDidMount() {
     }
     render() {
-        const {selectList } = this.state
+        const { selectList } = this.state
         const columns = [
             {
-              title: '接口权限',
-              dataIndex: 'text',
+                title: '接口权限',
+                dataIndex: 'text',
             }
-          ]
+        ]
         const rowSelection = {
             selectList,
             onChange: this.onSelectChange,
         }
         return (
-            <Modal
-                title="接口权限"
-                visible={this.props.apiVisible}
-                onOk={this.apiRoleModelhandleOk}
-                onCancel={this.handleCancel.bind(this, false)}
-            >
-                <Table rowSelection={rowSelection} rowKey="id" columns={columns} dataSource={this.props.apiList} pagination={false} />
-            </Modal>
+            <Spin spinning={this.state.loading} delay={500}>
+                <Modal
+                    title="接口权限"
+                    visible={this.props.apiVisible}
+                    onOk={this.apiRoleModelhandleOk}
+                    onCancel={this.handleCancel.bind(this, false)}
+                >
+                    <Table rowSelection={rowSelection} rowKey="id" columns={columns} dataSource={this.props.apiList} pagination={false} />
+                </Modal>
+            </Spin>
         )
     }
 }
