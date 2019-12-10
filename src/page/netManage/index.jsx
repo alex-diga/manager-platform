@@ -11,7 +11,7 @@ class NetManage extends React.Component {
         this.state = {
             pageSize: 10,
             pageNum: 1,
-            pageTotal: 1,
+            pageTotal: 0,
             netKey: '',
             selectStatus: null,
             selectLimit: null,
@@ -126,7 +126,8 @@ class NetManage extends React.Component {
             if (res.code === '0') {
                 this.setState({
                     netTabList: res.data.rows,
-                    searchState: false
+                    searchState: false,
+                    pageTotal: res.data.total
                 })
             }
         })
@@ -262,17 +263,17 @@ class NetManage extends React.Component {
                     singleData={singleData}
                     modalType={modalType} />
                 <Table rowSelection={rowSelection} rowKey="id" bordered columns={columns} dataSource={netTabList} pagination={false} />
-                <div className="pageBox">
+                {pageTotal > 0 && <div className="pageBox">
                     <Pagination
                         defaultCurrent={pageNum}
                         pageSize={pageSize}
                         total={pageTotal}
                         onChange={this.changePageNum}
                         onShowSizeChange={this.changePagSize}
-                        showTotal={total => `共 ${pageTotal} 条`}
+                        showTotal={pageTotal => `共 ${pageTotal} 条`}
                         showSizeChanger
                         showQuickJumper />
-                </div>
+                </div>}
             </div>
         )
     }

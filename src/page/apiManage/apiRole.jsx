@@ -21,6 +21,7 @@ class EditMeb extends React.Component {
                     app: this.props.match.params.name
                 },res => {
                     if (res.code === '0') {
+                        message.success('修改成功')
                         this.handleCancel(true)
                     }
                 })
@@ -62,9 +63,6 @@ const formItemLayout = {
     wrapperCol: { span: 20 },
 }
 class ApiForm extends React.Component {
-    constructor(props) {
-        super(props)
-    }
     componentDidMount() {
         console.log(this.props.selectList)
         this.props.form.setFieldsValue({

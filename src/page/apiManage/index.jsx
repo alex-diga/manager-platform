@@ -13,7 +13,7 @@ class ApiManage extends React.Component {
             seatchState: false,
             pageNum: 1,
             pageSize: 10,
-            pageTotal: 1,
+            pageTotal: 0,
             tabList: [],
             roleList: [],
             modalVisible: false,
@@ -94,7 +94,8 @@ class ApiManage extends React.Component {
             if (res.code === '0') {
                 this.setState({
                     tabList: res.data.rows,
-                    seatchState: false
+                    seatchState: false,
+                    pageTotal: res.data.total
                 })
             }
         })
@@ -106,6 +107,11 @@ class ApiManage extends React.Component {
             }
         })
     }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.location.pathname != this.props.location.pathname) {
+            console.log('改变路由了')
+        } 
+     }
     componentDidMount() {
         this.getApiList()
     }
@@ -179,7 +185,7 @@ class ApiManage extends React.Component {
                     roleList={roleList}
                     closeModal={this.closeModalFn} />
                 <Table rowKey="id" bordered columns={columns} dataSource={tabList} pagination={false} />
-                <Pagination
+                {pageTotal > 0 && <Pagination
                     defaultCurrent={pageNum}
                     pageSize={pageSize}
                     total={pageTotal}
@@ -187,7 +193,7 @@ class ApiManage extends React.Component {
                     onShowSizeChange={this.changePagSize}
                     showTotal={() => `共 ${pageTotal} 条`}
                     showSizeChanger
-                    showQuickJumper />
+                    showQuickJumper />}
             </div>
         )
     }

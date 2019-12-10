@@ -17,6 +17,7 @@ class HeaderComponent extends Component {
         this.props.toggle()
     }
     loginOutFn() {
+        localStorage.clear()
         this.props.history.push('/login')
     }
     render() {

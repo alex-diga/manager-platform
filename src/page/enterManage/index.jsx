@@ -15,7 +15,7 @@ class EnterManage extends React.Component {
             searchState: false,
             pageSize: 10,
             pageNum: 1,
-            pageTotal: 1,
+            pageTotal: 0,
             tabList: [],
             roleList: [],
             editForm: {},
@@ -225,7 +225,7 @@ class EnterManage extends React.Component {
                     closeModel={this.closeModel}
                     ref="mebModalRef" />
                 <Table rowKey="id" bordered columns={columns} dataSource={tabList} pagination={false} />
-                <div className="pageBox">
+                {pageTotal > 0 && <div className="pageBox">
                     <Pagination
                         defaultCurrent={pageNum}
                         pageSize={pageSize}
@@ -235,7 +235,7 @@ class EnterManage extends React.Component {
                         showTotal={() => `共 ${pageTotal} 条`}
                         showSizeChanger
                         showQuickJumper />
-                </div>
+                </div>}
             </div>
         )
     }

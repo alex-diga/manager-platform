@@ -5,8 +5,7 @@ import { Route, Redirect } from 'react-router-dom'
 class AuthorizedRoute extends React.Component {
 	render() {
 		const { component: Component, ...rest } = this.props
-		const isLogged = true
-
+		const isLogged = localStorage.getItem("easyconf_jwt") ? true : false
 		return (
 			<Route {...rest} render={props => {
 				return isLogged

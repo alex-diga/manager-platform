@@ -21,7 +21,7 @@ class ContentMain extends React.Component {
 					<Route path='/page/netdata/:name' component={NetData} />
 					<Route path='/page/apimanage/:name' component={ApiManage} />
 					<Route path='/page/rolemanage/:name' component={RoleManage} />
-					<Route path='/page/allscope/:name' component={AllScope} />
+					<Route path='/page/allscope' component={AllScope} />
 					<Route path='/page/entermanage/:name' component={EnterManage} />
 				</Switch>
 			</div>

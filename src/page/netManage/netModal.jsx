@@ -128,7 +128,7 @@ class netForm extends React.Component {
         }
     }
     render() {
-        const { getFieldDecorator, getFieldsValues } = this.props.form
+        const { getFieldDecorator } = this.props.form
         return (
             <div className="netFormBox">
                 {this.props.modalType === 'single' && <div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import { Button } from 'antd'
+import { Button,Empty } from 'antd'
 import AddRole from './addRole'
 import EditRole from './editRole'
 import ApiRole from './apiRole'
@@ -82,7 +82,6 @@ class RoleManage extends React.Component {
         })
         ApiUtil.post("app.api.tree.listall", {app: quest}, res => {
             if (res.code === '0') {
-                console.log(res.data[0].children)
                 let arr = []
                 res.data[0].children.forEach(en => {
                     let obj = {
@@ -111,7 +110,7 @@ class RoleManage extends React.Component {
                     <Button type="primary" icon="edit" size="large" onClick={this.showAdd}>添加角色</Button>
                 </div>
                 <div className="roleList">
-                    {
+                    {rolesRows.length > 0 ?
                         rolesRows.map(item => {
                             return (
                                 <div className="roleItem" key={item.id}>
@@ -133,6 +132,7 @@ class RoleManage extends React.Component {
                                 </div>
                             )
                         })
+                        : <Empty description="暂无数据，请添加角色" />
                     }
                 </div>
                 <AddRole addVisible={addVisible} closeModel={this.closeModel}  />

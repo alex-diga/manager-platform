@@ -126,6 +126,7 @@ var ApiUtil = (function(){
 		,JWT_KEY:JWT_KEY
 		,logout:function() {
 			localStorage.clear()
+			console.log(window.history)
 			window.history.pushState(null, null, '/login')
     	}
     	,getParam:function(key) {
