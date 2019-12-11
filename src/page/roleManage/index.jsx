@@ -126,7 +126,7 @@ class RoleManage extends React.Component {
                                         </div>
                                         <div className="roleOperarion">
                                             <Button type="primary" size="small" onClick={this.showEdit.bind(this, item)}>修改</Button>
-                                            <Button type="primary" size="small" onClick={this.showApiRoleManageModel.bind(this, item)}>接口权限</Button>
+                                            {/* <Button type="primary" size="small" onClick={this.showApiRoleManageModel.bind(this, item)}>接口权限</Button> */}
                                         </div>
                                     </div>
                                 </div>

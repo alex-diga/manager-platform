@@ -40,8 +40,7 @@ class NetManage extends React.Component {
         // console.log(page)
         this.setState({
             pageNum: page
-        })
-        this.getNetTabList()
+        }, () => this.getNetTabList())  
     }
     // 改变分页数
     changePagSize(current, size) {
@@ -49,8 +48,7 @@ class NetManage extends React.Component {
         this.setState({
             pageNum: 1,
             pageSize: size
-        })
-        this.getNetTabList()
+        }, () => this.getNetTabList())
     }
     // 搜索
     changeNetKey(e) {
@@ -224,7 +222,7 @@ class NetManage extends React.Component {
                 key: 'action',
                 render: (reocrd) =>
                     netTabList.length > 0
-                        ? <Button type="primary" onClick={this.editNetManage.bind(this, reocrd)}>修改</Button>
+                        ? <Button type="primary" size="small" onClick={this.editNetManage.bind(this, reocrd)}>修改</Button>
                         : null
             },
         ]
@@ -262,7 +260,7 @@ class NetManage extends React.Component {
                     selectedBatchData={selectedBatchData}
                     singleData={singleData}
                     modalType={modalType} />
-                <Table rowSelection={rowSelection} rowKey="id" bordered columns={columns} dataSource={netTabList} pagination={false} />
+                <Table rowSelection={rowSelection} rowKey="apiId" bordered columns={columns} dataSource={netTabList} pagination={false} />
                 {pageTotal > 0 && <div className="pageBox">
                     <Pagination
                         defaultCurrent={pageNum}

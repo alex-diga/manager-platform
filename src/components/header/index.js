@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ApiUtil from '../../utils/ApiUtil'
 import './index.scss'
 
 class HeaderComponent extends Component {
@@ -11,20 +12,22 @@ class HeaderComponent extends Component {
         this.toggleFn = this.toggleFn.bind(this)
     }
     toggleFn() {
-        this.setState({
-            scrolllection: !this.state.scrolllection
-        })
-        this.props.toggle()
+        // console.log( window.location)
+        // localStorage.clear()
+        // window.location.href = '/login'
+        // this.setState({
+        //     scrolllection: !this.state.scrolllection
+        // })
+        // this.props.toggle()
     }
     loginOutFn() {
-        localStorage.clear()
-        this.props.history.push('/login')
+        ApiUtil.logout()
     }
     render() {
         return (
             <div className="headerComBox">
                 <div className="leftBox cursorBox" onClick={this.toggleFn}>
-                    {this.state.scrolllection ? '显示' : '收缩'}
+                    {/* {this.state.scrolllection ? '显示' : '收缩'} */}
                 </div>
                 <div className="loginOutBox cursorBox" onClick={this.loginOutFn}>
                     退出

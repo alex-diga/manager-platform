@@ -78,8 +78,7 @@ class EnterManage extends React.Component {
         // console.log(page)
         this.setState({
             pageNum: page
-        })
-        this.getDataFn()
+        }, () => this.getDataFn())    
     }
     // 改变分页数
     changePagSize(current, size) {
@@ -87,8 +86,7 @@ class EnterManage extends React.Component {
         this.setState({
             pageNum: 1,
             pageSize: size
-        })
-        this.getDataFn()
+        }, () => this.getDataFn())
     }
     closeModel(type) {
         this.setState({
@@ -195,7 +193,7 @@ class EnterManage extends React.Component {
                 render: (reocrd) =>
                     tabList.length > 0 ? (
                         <span>
-                            <Button type="primary" onClick={this.editSource.bind(this, reocrd)}>修改</Button>
+                            <Button type="primary" size="small" onClick={this.editSource.bind(this, reocrd)}>修改</Button>
                         </span>) : null
             }
 

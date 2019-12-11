@@ -46,16 +46,14 @@ class ApiManage extends React.Component {
     changePageNum(page) {
         this.setState({
             pageNum: page
-        })
-        this.getApiList()
+        }, () => this.getApiList())
     }
     // 切换每页显示数据数量
     changePagSize(current, size) {
         this.setState({
             pageNum: 1,
             pageSize: size
-        })
-        this.getApiList()
+        }, () => this.getApiList())
     }
     closeModalFn(state) {
         this.setState({
@@ -165,7 +163,7 @@ class ApiManage extends React.Component {
                 render: (reocrd) =>
                     tabList.length > 0 ? (
                         <span>
-                            <Button type="primary" onClick={this.authorizationFn.bind(this, reocrd)}>授权</Button>
+                            <Button type="primary" size="small" onClick={this.authorizationFn.bind(this, reocrd)}>授权</Button>
                         </span>) : null
             }
         ]

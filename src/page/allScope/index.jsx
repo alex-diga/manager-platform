@@ -50,15 +50,13 @@ class AllScope extends React.Component {
     changePageNum(page) {
         this.setState({
             pageNum: page
-        })
-        this.getAllDeployData()
+        }, () => this.getAllDeployData())
     }
     changePagSize(current, size) {
         this.setState({
             pageNum: 1,
             pageSize: size
-        })
-        this.getAllDeployData()
+        }, () => this.getAllDeployData())
     }
     getAllDeployData() {
         ApiUtil.post("global.config.pagelist", {
@@ -103,7 +101,7 @@ class AllScope extends React.Component {
                 key: 'action',
                 render: (reocrd) =>
                     allScopeList.length > 0
-                        ? <Button type="primary" onClick={this.editDeploy.bind(this, reocrd)}>修改</Button>
+                        ? <Button type="primary" size="small" onClick={this.editDeploy.bind(this, reocrd)}>修改</Button>
                         : null
             },
         ]
