@@ -26,11 +26,12 @@ var ApiUtil = (function () {
 	var params = {};
 	var JWT_KEY = "easyconf_jwt";
 
-	// 测试环境
-	// var url = 'http://bbb.a.com:8070/api';
+	// 开发环境
 	var url = "http://172.16.119.44:9090/api"
 	// var url = "http://172.20.1.237:7420/api"
-	
+	// 测试、生产环境
+	// var url = "/api"
+
 	var app_key = 'test';
 	var secret = '123456';
 
@@ -103,10 +104,10 @@ var ApiUtil = (function () {
 		},
 		JWT_KEY: JWT_KEY,
 		logout: function () {
-			this.post('nologin.admin.logout', {}, function (resp) {
-				localStorage.removeItem("easyconf_jwt");
+			// this.post('nologin.admin.logout', {}, function (resp) {
+				localStorage.removeItem(JWT_KEY);
 				window.location.href = '/login'
-			})
+			// })
 		},
 		getParam: function (key) {
 			return params[key];
