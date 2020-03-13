@@ -47,7 +47,7 @@ class LayoutComponent extends Component {
 				<Layout style={{ width: '100%', height: '100%' }}>
 					<Sider className="leftSiderBox">
 						{!collapsed ? <div className="logoBox">
-							管理平台
+							配置中心
 							</div> : null}
 						{menuList.length > 0 && <CustomMenu menuList={menuList} defaultData={defaultData} />}
 					</Sider>

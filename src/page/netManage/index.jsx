@@ -15,7 +15,7 @@ class NetManage extends React.Component {
             netKey: '',
             selectStatus: null,
             selectLimit: null,
-            searchState: false,
+            // searchState: false,
             netTabList: [],
             selectedRowKeys: [],
             selectedBatchData: [],
@@ -54,24 +54,27 @@ class NetManage extends React.Component {
     changeNetKey(e) {
         this.setState({
             netKey: e.target.value,
-            searchState: true
+            // searchState: true
         })
     }
     searchNetKey() {
-        if (this.state.searchState) {
-            this.getNetTabList()
-        }
+        // if (this.state.searchState) {
+            this.setState({
+                pageNum: 1,
+                netKey: this.state.netKey.trim()
+            }, () => this.getNetTabList())
+        // }
     }
     select1Change(e) {
         this.setState({
             selectStatus: e,
-            searchState: true
+            // searchState: true
         })
     }
     select2Change(e) {
         this.setState({
             selectLimit: e,
-            searchState: true
+            // searchState: true
         })
     }
     closeModal(state) {
@@ -84,7 +87,6 @@ class NetManage extends React.Component {
     }
     // 修改设置
     editNetManage(data) {
-        console.log(data)
         this.setState({
             showModal: true,
             modalType: 'single',
@@ -99,14 +101,10 @@ class NetManage extends React.Component {
     }
     batchSettingFn() {
         if (this.state.selectedRowKeys.length > 0) {
-            let arr = []
-            this.state.selectedRowKeys.forEach(en => {
-                arr.push(this.state.netTabList[en - 1])
-            })
             this.setState({
                 showModal: true,
                 modalType: 'batch',
-                selectedBatchData: arr
+                selectedBatchData: this.state.selectedRowKeys
             })
         } else {
             message.warn("请勾选数据项")
@@ -124,7 +122,7 @@ class NetManage extends React.Component {
             if (res.code === '0') {
                 this.setState({
                     netTabList: res.data.rows,
-                    searchState: false,
+                    // searchState: false,
                     pageTotal: res.data.total
                 })
             }
@@ -164,47 +162,48 @@ class NetManage extends React.Component {
             {
                 title: '接口名',
                 dataIndex: 'name',
-                width: '15%'
+                width: 250,
+                fixed: 'left'
             },
             {
                 title: '版本号',
                 dataIndex: 'version',
-                width: '10%',
                 render: version =>
                     <span>{version ? version : '--'}</span>
             },
             {
                 title: '每秒可处理请求数',
                 dataIndex: 'limitCount',
-                width: '10%',
-                defaultSortOrder: 'descend',
-                sorter: (a, b) => a.limitCount - b.limitCount,
+                width: 160,
+                // defaultSortOrder: 'descend',
+                // sorter: (a, b) => a.limitCount - b.limitCount,
             },
             {
                 title: 'code',
                 dataIndex: 'limitCode',
-                width: '10%',
+                width: 120,
                 render: code =>
                     <span>{code ? code : '--'}</span>
             },
             {
                 title: 'msg',
                 dataIndex: 'limitMsg',
-                width: '12%',
+                width: 220,
+                ellipsis: true,
                 render: limitMsg =>
                     <span>{limitMsg ? limitMsg : '--'}</span>
             },
             {
-                title: '令牌通容量',
+                title: '令牌桶容量',
                 dataIndex: 'tokenBucketCount',
-                width: '10%',
-                defaultSortOrder: 'descend',
-                sorter: (a, b) => a.tokenBucketCount - b.tokenBucketCount,
+                width: 120,
+                // defaultSortOrder: 'descend',
+                // sorter: (a, b) => a.tokenBucketCount - b.tokenBucketCount,
             },
             {
                 title: '开启状态',
                 dataIndex: 'status',
-                width: '10%',
+                width: 160,
                 render: status => {
                     let color = status === 1 ? '#87d068' : '#f50'
                     return (<Tag color={color}>{status === 1 ? '开启' : '关闭'}</Tag>)
@@ -213,13 +212,15 @@ class NetManage extends React.Component {
             {
                 title: '当前策略',
                 dataIndex: 'limitType',
-                width: '10%',
+                width: 160,
                 render: limitType =>
                     <span>{limitType === 'LIMIT' ? '限流策略' : '令牌桶策略'}</span>
             },
             {
                 title: '操作',
                 key: 'action',
+                width: 160,
+                fixed: 'right',
                 render: (reocrd) =>
                     netTabList.length > 0
                         ? <Button type="primary" size="small" onClick={this.editNetManage.bind(this, reocrd)}>修改</Button>
@@ -235,7 +236,7 @@ class NetManage extends React.Component {
             <div className="netManagePage">
                 <div className="searchBox">
                     <Button className="searchItem settingButton" icon="edit" onClick={this.batchSettingFn}>批量设置</Button>
-                    <Input className="searchItem searchInput" allowClear placeholder="请输入接口名" onChange={this.changeNetKey} value={this.state.netKey} />
+                    <Input className="searchItem searchInput" allowClear placeholder="请输入接口名" onPressEnter={this.searchNetKey} onChange={this.changeNetKey} value={this.state.netKey} />
                     <Select className="searchItem selectBox" defaultValue="全部" onChange={this.select1Change}>
                         {options1.map((en, index) => {
                             return (
@@ -252,17 +253,18 @@ class NetManage extends React.Component {
                     </Select>
                     <Button className="searchItem" icon="search" type="primary" onClick={this.searchNetKey}>搜索</Button>
                 </div>
-                <NetModal
+                {showModal && <NetModal
                     ref="netModalRef"
                     match={this.props.match}
                     closeModal={this.closeModal}
                     showModal={showModal}
                     selectedBatchData={selectedBatchData}
                     singleData={singleData}
-                    modalType={modalType} />
-                <Table rowSelection={rowSelection} rowKey="apiId" bordered columns={columns} dataSource={netTabList} pagination={false} />
+                    modalType={modalType} />}
+                <Table rowSelection={rowSelection} rowKey="apiId" bordered columns={columns} dataSource={netTabList} pagination={false}  scroll={{ x: 1520 }} scrollToFirstRowOnChange />
                 {pageTotal > 0 && <div className="pageBox">
                     <Pagination
+                        current={pageNum}
                         defaultCurrent={pageNum}
                         pageSize={pageSize}
                         total={pageTotal}

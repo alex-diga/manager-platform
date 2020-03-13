@@ -17,6 +17,7 @@ class RoleManage extends React.Component {
             editForm: {},
             apiList: [],
             currentApiList: [],
+            currentRoleCode: '',
             rolesRows: [],
         }
         this.showAdd = this.showAdd.bind(this)
@@ -36,7 +37,6 @@ class RoleManage extends React.Component {
             editVisible: true,
             editForm: data
         })
-        this.refs.editRoleRef.setForm(data)
     }
     // 显示接口权限对话框
     showApiRoleManageModel(obj) {
@@ -45,17 +45,21 @@ class RoleManage extends React.Component {
                 if (res.data) {
                     let arr  = []
                     res.data.forEach(en => {
-                        arr.push(en.apiId)
+                        arr.push(en.apiId.toString())
                     })
                     this.setState({
-                        currentApiList: arr
+                        currentApiList: arr,
+                        currentRoleCode: obj.roleCode,
+                        apiVisible: true
                     })
-                    this.refs.apiRoleRef.setDataFn(arr, this.state.apiList, obj.roleCode)
                 }
+            } else {
+                this.setState({
+                    currentApiList: [],
+                    currentRoleCode: obj.roleCode,
+                    apiVisible: true
+                })
             }
-        })
-        this.setState({
-            apiVisible: true
         })
     }
     // 关闭对话框，如果修改了数据，重新请求一次数据
@@ -82,19 +86,8 @@ class RoleManage extends React.Component {
         })
         ApiUtil.post("app.api.tree.listall", {app: quest}, res => {
             if (res.code === '0') {
-                let arr = []
-                res.data[0].children.forEach(en => {
-                    let obj = {
-                        id: en.id,
-                        text: en.text,
-                        orderIndex: en.orderIndex,
-                        root: en.root,
-                        state: en.state
-                    }
-                    arr.push(obj)
-                })
                 this.setState({
-                    apiList: arr
+                    apiList: res.data
                 })
             }
         })
@@ -103,7 +96,7 @@ class RoleManage extends React.Component {
         this.getDataFn()
     }
     render() {
-        const { addVisible, apiVisible, editVisible, rolesRows, editForm, apiList, currentApiList } = this.state
+        const { addVisible, apiVisible, editVisible, rolesRows, editForm, apiList, currentApiList, currentRoleCode } = this.state
         return (
             <div className="roleManagePage">
                 <div className="addRoleBox">
@@ -126,7 +119,7 @@ class RoleManage extends React.Component {
                                         </div>
                                         <div className="roleOperarion">
                                             <Button type="primary" size="small" onClick={this.showEdit.bind(this, item)}>修改</Button>
-                                            {/* <Button type="primary" size="small" onClick={this.showApiRoleManageModel.bind(this, item)}>接口权限</Button> */}
+                                            <Button type="primary" size="small" onClick={this.showApiRoleManageModel.bind(this, item)}>接口权限</Button>
                                         </div>
                                     </div>
                                 </div>
@@ -135,9 +128,9 @@ class RoleManage extends React.Component {
                         : <Empty description="暂无数据，请添加角色" />
                     }
                 </div>
-                <AddRole addVisible={addVisible} closeModel={this.closeModel}  />
-                <EditRole editVisible={editVisible} closeModel={this.closeModel} editForm={editForm} ref="editRoleRef" />
-                <ApiRole apiVisible={apiVisible} closeModel={this.closeModel} currentApiList={currentApiList} apiList={apiList} ref="apiRoleRef" />
+                {addVisible && <AddRole addVisible={addVisible} closeModel={this.closeModel}  />}
+                {editVisible && <EditRole editVisible={editVisible} closeModel={this.closeModel} editForm={editForm} />}
+                {apiVisible && <ApiRole match={this.props.match} roleCode={currentRoleCode} apiVisible={apiVisible} closeModel={this.closeModel} currentApiList={currentApiList} apiList={apiList} ref="apiRoleRef" />}
             </div>
         )
     }

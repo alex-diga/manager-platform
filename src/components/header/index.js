@@ -24,11 +24,13 @@ class HeaderComponent extends Component {
         ApiUtil.logout()
     }
     render() {
+        const userName = localStorage.getItem("userName")
         return (
             <div className="headerComBox">
-                <div className="leftBox cursorBox" onClick={this.toggleFn}>
-                    {/* {this.state.scrolllection ? '显示' : '收缩'} */}
-                </div>
+                {/* <div className="leftBox cursorBox" onClick={this.toggleFn}>
+                    {this.state.scrolllection ? '显示' : '收缩'}
+                </div> */}
+                <div className="userName">欢迎:{userName}</div>
                 <div className="loginOutBox cursorBox" onClick={this.loginOutFn}>
                     退出
                 </div>

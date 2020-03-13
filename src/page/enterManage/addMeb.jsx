@@ -8,14 +8,19 @@ class AddMeb extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            loading: false
+            loading: false,
+            addMebVisible: props.addMebVisible
         }
         this.enterhandleOk = this.enterhandleOk.bind(this)
         this.enterhandleCancel = this.enterhandleCancel.bind(this)
     }
     enterhandleOk() {
+        if (!this.state.loading) {
         this.refs.mebFormRef.validateFields((err, values) => {
             if (!err) {
+                this.setState({
+                    loading: true
+                })
                 let paramsName = this.props.match.params.name
                 values.app = paramsName
                 ApiUtil.post("app.client.add", values, res => {
@@ -24,16 +29,27 @@ class AddMeb extends React.Component {
                         this.enterhandleCancel(true)
                     } else if (res.code === '-9') {
                         message.error('appKey已存在')
-                        return false
+                        this.setState({
+                            loading: false
+                        })
+                    } else {
+                        this.setState({
+                            loading: false
+                        })
                     }
                 })
             }
         })
-
+    }
     }
     enterhandleCancel(type) {
-        this.refs.mebFormRef.resetFields()
-        this.props.closeModel(type)
+        this.setState({
+            addMebVisible: false,
+            loading: false
+        }, () => {
+            this.refs.mebFormRef.resetFields()
+            this.props.closeModel(type)
+        })
     }
     setMebFormData(data) {
         console.log(data)
@@ -57,13 +73,13 @@ class AddMeb extends React.Component {
 
     }
     render() {
-        const { roleList, addMebVisible, mebFormType } = this.props
+        const { roleList, mebFormType } = this.props
         return (
             <Modal
                 title="新增接入方"
                 width="720px"
                 className="enterMebModalBox"
-                visible={addMebVisible}
+                visible={this.state.addMebVisible}
                 onOk={this.enterhandleOk}
                 onCancel={this.enterhandleCancel.bind(this, false)}
             >

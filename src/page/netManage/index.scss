@@ -30,6 +30,7 @@
 	width: 720px;
 	.netFormBox {
 		.ant-form-item {
+			margin-bottom: 16px;
 			.ant-form-item-label {
 				text-align: left;
 			}
@@ -50,7 +51,7 @@
 				margin: 0;
 			}
 			.ant-form-item + .ant-form-item{
-				margin-top: 24px;
+				margin-top: 16px;
 			}			
 		}
 	}

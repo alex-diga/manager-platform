@@ -10,7 +10,7 @@ class ApiManage extends React.Component {
         super(props)
         this.state = {
             apiKey: '',
-            seatchState: false,
+            // seatchState: false,
             pageNum: 1,
             pageSize: 10,
             pageTotal: 0,
@@ -31,16 +31,16 @@ class ApiManage extends React.Component {
     changeKey(e) {
         this.setState({
             apiKey: e.target.value,
-            seatchState: true
+            // seatchState: true
         })
     }
     searchApiKey() {
-        if (this.state.seatchState) {
+        // if (this.state.seatchState) {
             this.setState({
+                pageNum: 1,
                 apiKey: this.state.apiKey.trim()
-            })
-            this.getApiList()
-        }
+            }, () => this.getApiList())
+        // }
     }
     // 换页
     changePageNum(page) {
@@ -78,7 +78,6 @@ class ApiManage extends React.Component {
                     modalVisible: true,
                     roleId: data.id
                 })
-                this.refs.apiRoleRef.setApiRole(arr)
             }
         })
     }
@@ -92,7 +91,7 @@ class ApiManage extends React.Component {
             if (res.code === '0') {
                 this.setState({
                     tabList: res.data.rows,
-                    seatchState: false,
+                    // seatchState: false,
                     pageTotal: res.data.total
                 })
             }
@@ -106,7 +105,7 @@ class ApiManage extends React.Component {
         })
     }
     componentWillReceiveProps(nextProps) {
-        if (nextProps.location.pathname != this.props.location.pathname) {
+        if (nextProps.location.pathname !== this.props.location.pathname) {
             console.log('改变路由了')
         } 
      }
@@ -118,19 +117,20 @@ class ApiManage extends React.Component {
             {
                 title: '接口名',
                 dataIndex: 'name',
-                width: '15%'
+                fixed: 'left',
+                width: 200,
             },
             {
                 title: '版本号',
                 dataIndex: 'version',
-                width: '15%',
                 render: version =>
                     <span>{version ? version : '--'}</span>
             },
             {
                 title: '描述',
                 dataIndex: 'description',
-                width: '20%',
+                width: 360,
+                ellipsis: true,
             },
             {
                 title: '添加时间',
@@ -160,6 +160,8 @@ class ApiManage extends React.Component {
             {
                 title: '操作',
                 key: 'action',
+                fixed: 'right',
+                width: 200,
                 render: (reocrd) =>
                     tabList.length > 0 ? (
                         <span>
@@ -171,19 +173,20 @@ class ApiManage extends React.Component {
         return (
             <div className="apiManagePage">
                 <div className="searchBox">
-                    <Input placeholder="请输入接口名" allowClear onChange={this.changeKey} value={this.state.apiKey} />
+                    <Input placeholder="请输入接口名" onPressEnter={this.searchApiKey} allowClear onChange={this.changeKey} value={this.state.apiKey} />
                     <Button type="primary" icon="search" onClick={this.searchApiKey}>搜索</Button>
                 </div>
-                <ApiRole
+                {modalVisible && <ApiRole
                     ref="apiRoleRef"
                     roleId={roleId}
                     match={this.props.match}
                     modalVisible={modalVisible}
                     selectList={selectList}
                     roleList={roleList}
-                    closeModal={this.closeModalFn} />
-                <Table rowKey="id" bordered columns={columns} dataSource={tabList} pagination={false} />
+                    closeModal={this.closeModalFn} />}
+                <Table rowKey="id" bordered columns={columns} dataSource={tabList} pagination={false} scroll={{ x: 1520 }} />
                 {pageTotal > 0 && <Pagination
+                    current={pageNum}
                     defaultCurrent={pageNum}
                     pageSize={pageSize}
                     total={pageTotal}

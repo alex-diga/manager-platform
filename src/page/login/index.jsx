@@ -20,8 +20,9 @@ class Login extends React.Component {
                 ApiUtil.post('nologin.admin.login', {username: values.username, password: pwd}, res => {
                     if (res.code === '0') {
                         let JWT_KEY = ApiUtil.JWT_KEY
+                        localStorage.setItem('userName',values.username)
                         localStorage.setItem(JWT_KEY,res.data)
-                        that.props.history.push("/page/home")
+                        that.props.history.push("/home")
                     }
                 })
             }

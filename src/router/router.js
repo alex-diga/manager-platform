@@ -9,8 +9,10 @@ export const Router = () => (
 	<BrowserRouter>
 		<Switch>
 			<Route path="/login" component={Login} />
+			<Redirect from="/index.html" exact to="/login" />
 			<Redirect from="/" exact to="/login" />{/*注意redirect转向的地址要先定义好路由*/}
-			<AuthorizedRoute path="/page" component={Layout} />
+			<AuthorizedRoute path="/home" component={Layout} />
+			<AuthorizedRoute path="/manage" component={Layout} />
 			<Route component={NoFound} />
 		</Switch>
 	</BrowserRouter>

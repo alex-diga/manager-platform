@@ -17,6 +17,11 @@
 	.pageBox {
 		margin-top: 20px;
 	}
+	.roleListBox {
+		.ant-tag {
+			margin-bottom: 4px;
+		}
+	}
 }
 .enterManageModel {
 	.keyContent + .keyContent {
@@ -43,7 +48,7 @@
 }
 .enterMebModalBox {
 	.ant-modal-body {
-		height: 600px;
+		max-height: 480px;
 		overflow-y: auto;
 	}
 	.itemButtonBox {

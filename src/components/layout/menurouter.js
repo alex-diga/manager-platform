@@ -3,7 +3,7 @@ const routeMenus = [{
         title: '首页',
         icon: 'iconshuqian',
         key: 'k1',
-        path: '/page/home',
+        path: '/home',
     },
     {
         title: '接口配置',
@@ -14,28 +14,35 @@ const routeMenus = [{
                 icon: 'iconshuqian',
                 key: 'k2-1',
                 pkey: 'k2',
-                path: '/page/netmanage',
+                path: '/manage/netmanage',
             },
             {
                 title: '接口管理',
                 icon: 'iconshuqian',
                 key: 'k2-2',
                 pkey: 'k2',
-                path: '/page/apimanage',
+                path: '/manage/apimanage',
             },
             {
                 title: '权限管理',
                 icon: 'iconshuqian',
                 key: 'k2-3',
                 pkey: 'k2',
-                path: '/page/rolemanage',
+                path: '/manage/rolemanage',
             },
             {
                 title: '流量数据',
                 icon: 'iconshuqian',
                 key: 'k2-4',
                 pkey: 'k2',
-                path: '/page/netdata',
+                path: '/manage/netdata',
+            },
+            {
+                title: '接入方管理',
+                icon: 'iconshuqian',
+                key: 'k2-5',
+                pkey: 'k2',
+                path: '/manage/entermanage',
             }
         ]
     },
@@ -48,53 +55,56 @@ const routeMenus = [{
             icon: 'iconshuqian',
             key: 'k3-1',
             pkey: 'k3',
-            path: '/page/allscope',
+            path: '/manage/allscope',
         }]
     },
 ]
 const routeChild = [{
         title: '限流设置',
-        path: '/page/netmanage',
+        path: '/manage/netmanage',
     },
     {
         title: '接口管理',
-        path: '/page/apimanage',
+        path: '/manage/apimanage',
     },
     {
         title: '权限管理',
-        path: '/page/rolemanage',
+        path: '/manage/rolemanage',
     },
     {
         title: '流量数据',
-        path: '/page/netdata',
+        path: '/manage/netdata',
     },
     {
         title: '接入方管理',
-        path: '/page/entermanage',
+        path: '/manage/entermanage',
     }
 ]
 export const setMenuList = function (dataArr) {
     let resArr = []
-    let child = []
-    for (let i = 0; i < dataArr.length; i++) {
-        let childArr = []
-        for (let j = 0; j < routeChild.length; j++) {
-            let obj = JSON.parse(JSON.stringify(routeChild[j]))
-            obj.path = `${routeChild[j].path}/${dataArr[i].text}`
-            obj.key = `k2-${i}-${j}`
-            obj.pkey = `k2-${i}`
-            childArr.push(obj)
-        }
-        let data = {
-            title: dataArr[i].text,
-            icon: 'iconshuqian',
-            key: `k2-${i}`,
-            pkey: `k2`,
-            children: childArr
-        }
-        child.push(data)
-    }
-    routeMenus[1].children = child
+    // let child = []
+    // for (let i = 0; i < dataArr.length; i++) {
+    //     let childArr = []
+    //     for (let j = 0; j < routeChild.length; j++) {
+    //         let obj = JSON.parse(JSON.stringify(routeChild[j]))
+    //         obj.path = `${routeChild[j].path}/${dataArr[i].text}`
+    //         obj.key = `k2-${i}-${j}`
+    //         obj.pkey = `k2-${i}`
+    //         childArr.push(obj)
+    //     }
+    //     let data = {
+    //         title: dataArr[i].text,
+    //         icon: 'iconshuqian',
+    //         key: `k2-${i}`,
+    //         pkey: `k2`,
+    //         children: childArr
+    //     }
+    //     child.push(data)
+    // }
+    // routeMenus[1].children = child
+    routeMenus[1].children.forEach(en => {
+        en.path = `${en.path}/${dataArr[0].text}`
+    })
     resArr = JSON.parse(JSON.stringify(routeMenus))
     return resArr
 }

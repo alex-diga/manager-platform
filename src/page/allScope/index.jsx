@@ -108,10 +108,10 @@ class AllScope extends React.Component {
         const { pageSize, pageNum, pageTotal, allScopeList, modalType, modalForm, showModal } = this.state
         return (
             <div className="allScopePage">
-                <div className="pageHeader">
+                {/* <div className="pageHeader">
                     <Button type="primary" icon="edit" onClick={this.addScopeDeploy}>添加设置</Button>
-                </div>
-                <Deploy modalType={modalType} modalForm={modalForm} showModal={showModal} closeModal={this.closeModal} />
+                </div> */}
+                {showModal && <Deploy modalType={modalType} modalForm={modalForm} showModal={showModal} closeModal={this.closeModal} />}
                 <Table rowKey="id" bordered columns={columns} dataSource={allScopeList} pagination={false} />
                 {pageTotal && <Pagination
                     defaultCurrent={pageNum}

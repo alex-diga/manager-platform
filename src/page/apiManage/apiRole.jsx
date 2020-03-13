@@ -7,49 +7,58 @@ class EditMeb extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            loading: false
+            loading: false,
+            modalVisible: props.modalVisible
         }
         this.handleOk = this.handleOk.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
     }
     handleOk() {
-        this.refs.apiModalRef.validateFields((err, values) => {
-            if (!err) {
-                ApiUtil.post("api.role.update",{
-                    roleCodes: values.roleCodes,
-                    apiId:this.props.roleId,
-                    app: this.props.match.params.name
-                },res => {
-                    if (res.code === '0') {
-                        message.success('修改成功')
-                        this.handleCancel(true)
-                    }
-                })
-            }
+        if (!this.state.loading) {
+            this.refs.apiModalRef.validateFields((err, values) => {
+                if (!err) {
+                    this.setState({
+                        loading: true
+                    })
+                    ApiUtil.post("api.role.update",{
+                        roleCodes: values.roleCodes,
+                        apiId:this.props.roleId,
+                        app: this.props.match.params.name
+                    },res => {
+                        if (res.code === '0') {
+                            message.success('修改成功')         
+                            this.handleCancel(true)
+                        } else {
+                            this.setState({
+                                loading: false
+                            })
+                        }
+                    })
+                }
+            })
+        }       
+    }
+    handleCancel(type) {
+        this.setState({
+            modalVisible: false,
+            loading: false 
+        }, () => {
+            this.refs.apiModalRef.resetFields()
+            this.props.closeModal(type)
         })
     }
-    handleCancel() {
-        this.refs.apiModalRef.resetFields()
-        this.props.closeModal(false)
+    componentDidMount() {
+        console.log(this.props.modalVisible)
     }
-    setApiRole(data) {
-        console.log(data)
-        if (this.refs.apiModalRef) {
-            this.refs.apiModalRef.setFieldsValue({
-                roleCodes: data
-            })
-        }
-    }
-    componentDidMount() {}
     render() {
-        const { modalVisible } = this.props
         return (
             <Modal
                 title='接口授权'
                 width="720px"
                 className="apiModalBox"
-                visible={modalVisible}
+                visible={this.state.modalVisible}
                 onOk={this.handleOk}
+                confirmLoading={this.state.loading}
                 onCancel={this.handleCancel.bind(this, false)}
             >
                 <ApiFormCom ref="apiModalRef" selectList={this.props.selectList} roleList={this.props.roleList} />
@@ -64,7 +73,7 @@ const formItemLayout = {
 }
 class ApiForm extends React.Component {
     componentDidMount() {
-        console.log(this.props.selectList)
+        // console.log(this.props.selectList)
         this.props.form.setFieldsValue({
             roleCodes: this.props.selectList
         })
@@ -81,8 +90,8 @@ class ApiForm extends React.Component {
                         <Row>
                             {roleList.map(en => {
                                 return (
-                                    <Col span={6} key={en.id}>
-                                        <Checkbox value={en.id}>{en.text}</Checkbox>
+                                    <Col span={24} key={en.id}>
+                                        <Checkbox value={en.id}>{en.id}({en.text})</Checkbox>
                                     </Col>
                                 )
                             })}

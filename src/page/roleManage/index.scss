@@ -20,6 +20,7 @@
 		}
 		.roleItem {
 			width: calc(25% - 12px);
+			min-width: 320px;
 			border-radius: 8px;
 			background-color: #fff;
 			margin-bottom: 20px;
@@ -64,5 +65,12 @@
 				}
 			}
 		}
+	}
+}
+.roleApimanageModal {
+	width: 720px !important;
+	.ant-modal-body {
+		max-height: 480px;
+		overflow-y: auto;
 	}
 }

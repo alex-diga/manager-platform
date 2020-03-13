@@ -51,8 +51,8 @@ class MebForm extends React.Component {
             this.props.form.setFieldsValue({
                 appKey: dataForm.appKey,
                 secret: dataForm.secret,
-                pubKey: dataForm.pubKey ? dataForm.pubKey : '',
-                priKey: dataForm.priKey ? dataForm.priKey : '',
+                // pubKey: dataForm.pubKey ? dataForm.pubKey : '',
+                // priKey: dataForm.priKey ? dataForm.priKey : '',
                 roleCode: arr,
                 status: dataForm.status
             })
@@ -85,7 +85,7 @@ class MebForm extends React.Component {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Button className="itemButtonBox" type="primary" onClick={this.creatPubkey}>生成公钥、私钥</Button>
+                {/* <Button className="itemButtonBox" type="primary" onClick={this.creatPubkey}>生成公钥、私钥</Button>
                 <Form.Item {...formItemLayout} label="公钥">
                     {getFieldDecorator('pubKey', {
                         initialValue: ''
@@ -95,7 +95,7 @@ class MebForm extends React.Component {
                     {getFieldDecorator('priKey', {
                         initialValue: ''
                     })(<TextArea autoSize={{ minRows: 3, maxRows: 15 }} />)}
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item {...formItemLayout} label="角色">
                     {getFieldDecorator('roleCode', {
                         rules: [
@@ -109,8 +109,8 @@ class MebForm extends React.Component {
                             <Row>
                                 {roleList.map(en => {
                                     return (
-                                        <Col span={8} key={en.id}>
-                                            <Checkbox value={en.id}>{en.text}</Checkbox>
+                                        <Col span={24} key={en.id}>
+                                            <Checkbox value={en.id}>{en.id}({en.text})</Checkbox>
                                         </Col>
                                     )
                                 })}

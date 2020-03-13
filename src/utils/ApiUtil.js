@@ -27,10 +27,11 @@ var ApiUtil = (function () {
 	var JWT_KEY = "easyconf_jwt";
 
 	// 开发环境
-	var url = "http://172.16.119.44:9090/api"
+	//process.env.NODE_ENV === 'production'
+	// http://172.16.119.44:9090/
+	// http://172.16.119.185:7420/
+	var url = process.env.NODE_ENV === 'development' ? "http://172.16.119.44:9090/api" : "/api"
 	// var url = "http://172.20.1.237:7420/api"
-	// 测试、生产环境
-	// var url = "/api"
 
 	var app_key = 'test';
 	var secret = '123456';
@@ -87,7 +88,8 @@ var ApiUtil = (function () {
 					// console.log('resp',resp)
 					var code = resp.code;
 					if (!code || code === '-9') {
-						message.error('系统错误')
+						message.error('系统错误,稍后再试')
+						callback(resp, postDataStr);
 						return
 					}
 					if (code === '-100' || code === '18' || code === '21') { // 未登录
@@ -97,6 +99,7 @@ var ApiUtil = (function () {
 					if (code === '0') { // 成功
 						callback(resp, postDataStr);
 					} else {
+						callback(resp, postDataStr);
 						message.error(resp.msg)
 					}
 				}

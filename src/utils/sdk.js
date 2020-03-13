@@ -135,9 +135,9 @@ for(var j=0;j<4;j++){if(i*8+j*6>binarray.length*32){str+=b64pad}else{str+=tab.ch
 	
 			xhr.onreadystatechange = function() {
 				var jsonData = '';
-				if (xhr.readyState == 4){
+				if (xhr.readyState === 4){
 					var status = xhr.status;
-		            if ((status >= 200 && status < 300) || status == 304){
+		            if ((status >= 200 && status < 300) || status === 304){
 		            	jsonData = JSON.parse(xhr.responseText);
 		            	callback(jsonData, paramStr);
 		            } else {
@@ -148,7 +148,7 @@ for(var j=0;j<4;j++){if(i*8+j*6>binarray.length*32){str+=b64pad}else{str+=tab.ch
 		        }
 			};
 
-			if(method == GET_TYPE) {
+			if(method === GET_TYPE) {
 				var queryString = [];
 				
 				for (var key in params) {
@@ -158,12 +158,12 @@ for(var j=0;j<4;j++){if(i*8+j*6>binarray.length*32){str+=b64pad}else{str+=tab.ch
 				url = url + '?' + queryString.join('&');
 				xhr.open(method, url, true);
 				
-				xhr.timeout = 3000;
+				xhr.timeout = 10000;
 				xhr.ontimeout = function(){
 					message.error('请求超时');
 				}
 				xhr.send();
-			} else if(method == POST_TYPE) {
+			} else if(method === POST_TYPE) {
 				xhr.open(method, url, true);
 			
 				if(headers) {
@@ -171,7 +171,7 @@ for(var j=0;j<4;j++){if(i*8+j*6>binarray.length*32){str+=b64pad}else{str+=tab.ch
 						xhr.setRequestHeader(key,headers[key]);
 					}
 				}
-				xhr.timeout = 3000;
+				xhr.timeout = 10000;
 				xhr.ontimeout = function(){
 					message.error('请求超时');
 				}

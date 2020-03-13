@@ -5,39 +5,53 @@ import ApiUtil from '../../utils/ApiUtil'
 class NetModal extends React.Component {
     constructor(props) {
         super(props)
+        this.state = {
+            loading: false,
+            showModal: props.showModal
+        }
         this.nethandleOk = this.nethandleOk.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
     }
     // 确定添加角色、修改角色信息
     nethandleOk() {
-        this.refs.netFormRef.validateFields((err, values) => {
-            if (!err) {
-                let apiIds = []
-                if (this.props.modalType === 'batch') {
-                    this.props.selectedBatchData.forEach(en => {
-                        apiIds.push(en.apiId)
-                    })                                       
-                } else {
-                    apiIds.push(this.props.singleData.apiId)
-                }
-                values.apiIds = apiIds
-                values.app = this.props.match.params.name
-                ApiUtil.post("app.limit.update", values, res => {
-                    if (res.code === '0') {
-                        message.success(this.props.modalType === 'batch' ? '设置成功' : '修改成功')
-                        this.setState({
-                            loading: false
-                        })
-                        this.handleCancel(true)
+        if (!this.state.loading) {
+            this.refs.netFormRef.validateFields((err, values) => {
+                if (!err) {
+                    this.setState({
+                        loading: true
+                    })
+                    let apiIds = []
+                    if (this.props.modalType === 'batch') {
+                        apiIds = this.props.selectedBatchData
+                    } else {
+                        apiIds.push(this.props.singleData.apiId)
                     }
-                })
-            }
-        })
+                    values.apiIds = apiIds
+                    values.app = this.props.match.params.name
+                    ApiUtil.post("app.limit.update", values, res => {
+                        if (res.code === '0') {
+                            message.success(this.props.modalType === 'batch' ? '设置成功' : '修改成功')
+                            this.handleCancel(true)
+                        } else {
+                            this.setState({
+                                loading: false
+                            })
+                        }
+                    })
+                }
+            })
+        }
     }
     // 关闭对话框、清除form表单信息
     handleCancel(type) {
-        this.refs.netFormRef.resetFields()
-        this.props.closeModal(type)
+        this.setState({
+            loading: false,
+            showModal: false
+        }, () => {
+            // this.refs.netFormRef.resetFields()
+            this.props.closeModal(type)
+        })
+        
     }
     componentDidMount() { }
     render() {
@@ -46,16 +60,16 @@ class NetModal extends React.Component {
                 title="限流设置"
                 className="netModalBox"
                 width="720px"
-                visible={this.props.showModal}
+                visible={this.state.showModal}
                 onOk={this.nethandleOk}
                 onCancel={this.handleCancel.bind(this, false)}
             >
-                {this.props.showModal && <NetFormCom ref="netFormRef" singleData={this.props.singleData} modalType={this.props.modalType} />}
+                {this.state.showModal && <NetFormCom ref="netFormRef" singleData={this.props.singleData} modalType={this.props.modalType} />}
             </Modal>
         )
     }
 }
-
+// 表单
 const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 20 },
@@ -176,8 +190,12 @@ class netForm extends React.Component {
                                                 required: true,
                                                 message: '该项为必填项',
                                             },
+                                            {
+                                                pattern: /^\d+$/,
+                                                message: '请输入数字（正整数）'
+                                            }
                                         ]
-                                    })(<Input allowClear type="number" />)}
+                                    })(<Input allowClear />)}
                                 </Form.Item>
                                 <Form.Item {...formItemLayout1} label="限制后返回code">
                                     {getFieldDecorator('limitCode', {
@@ -187,6 +205,10 @@ class netForm extends React.Component {
                                                 required: true,
                                                 message: '该项为必填项',
                                             },
+                                            {
+                                                pattern: /^(0|[1-9][0-9]*|-[1-9][0-9]*)$/,
+                                                message: '请输入数字（整数）'
+                                            }
                                         ]
                                     })(<Input allowClear />)}
                                 </Form.Item>
@@ -210,8 +232,12 @@ class netForm extends React.Component {
                                             required: true,
                                             message: '该项为必填项',
                                         },
+                                        {
+                                            pattern: /^\d+$/,
+                                            message: '请输入数字（正整数）'
+                                        }
                                     ]
-                                })(<Input allowClear type="number" />)}
+                                })(<Input allowClear />)}
                             </Form.Item>}
                     </div>
                 </div>}

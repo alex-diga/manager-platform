@@ -1,7 +1,24 @@
 .homePage{
 	width: 100%;
 	height: 100%;
+	background: rgb(227, 227, 227);
+	border-radius: 8px;
+	padding: 20px;
+	position: relative;
 	.imgbox {
-		width: 100%;
+		// width: 100%;
+		height: 100%;
+	}
+	.homeTip {
+		position: absolute;
+		top: 50%;
+		right: 40%;
+		padding: 20px;
+		border-radius: 8px;
+		background-color: #fff;
+		font-size: 18px;
+		color: #333;
+		font-weight: 500;
+		transform: translateY(-50%);
 	}
 }

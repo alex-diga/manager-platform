@@ -12,13 +12,13 @@ class NetData extends React.Component {
             netKey: '',
             beginTime: null,
             endTime: null,
-            searchState: false,
+            // searchState: false,
             pageNum: 1,
             pageSize: 10,
             pageTotal: 0,
             netData: [],
             showLog: false,
-            errData: []
+            errData: ''
         }
         this.changeNetKey = this.changeNetKey.bind(this)
         this.searchNetKey = this.searchNetKey.bind(this)
@@ -32,23 +32,23 @@ class NetData extends React.Component {
     changeNetKey(e) {
         this.setState({
             netKey: e.target.value,
-            searchState: true
+            // searchState: true
         })
     }
     changeDataPicker(date, dateString) {
         this.setState({
             beginTime: moment(dateString[0], 'YYYY-MM-DD').valueOf(),
             endTime: moment(dateString[1], 'YYYY-MM-DD').valueOf() + 85399000,
-            searchState: true
+            // searchState: true
         })
     }
     searchNetKey() {
-        if (this.state.searchState) {
+        // if (this.state.searchState) {
             this.setState({
                 pageNum: 1,
             }, () => this.getNetDataFn())
-            
-        }
+
+        // }
     }
     changePageNum(page) {
         this.setState({
@@ -63,15 +63,17 @@ class NetData extends React.Component {
         }, () => this.getNetDataFn())
     }
     showErrorLog(data) {
+        console.log(data)
         this.setState({
             showLog: true,
-            errData: data
+            errData: data.errors
+            // errData: JSON.stringify(data.errors, null, 4)
         })
     }
     handleCancel() {
         this.setState({
             showLog: false
-        })  
+        })
     }
     getNetDataFn() {
         ApiUtil.post("monitor.info.pagelist", {
@@ -84,7 +86,7 @@ class NetData extends React.Component {
         }, res => {
             if (res.code === '0') {
                 this.setState({
-                    searchState: false,
+                    // searchState: false,
                     netData: res.data.rows,
                     pageTotal: res.data.total
                 })
@@ -99,18 +101,25 @@ class NetData extends React.Component {
             {
                 title: 'appKey',
                 dataIndex: 'appKey',
+                fixed: 'left',
+                width: 120,
             },
             {
                 title: '接口名',
                 dataIndex: 'name',
+                width: 200,
             },
             {
                 title: '描述',
                 dataIndex: 'description',
+                width: 220,
             },
             {
                 title: '版本',
                 dataIndex: 'version',
+                width: 120,
+                render: (version) =>
+                    <span>{version ? version : '--'}</span>
             },
             {
                 title: '访问次数',
@@ -119,26 +128,31 @@ class NetData extends React.Component {
             {
                 title: '错误次数',
                 dataIndex: 'errorCount',
+                width: 150,
                 render: (errorCount, reocrd) =>
-                    <span>{errorCount > 0 ? <Button size="small" type="primary" onClick={this.showErrorLog.bind(this, reocrd)}>查看</Button> : 0}</span>
+                    <span>{errorCount > 0 ? <Button size="small" type="primary" onClick={this.showErrorLog.bind(this, reocrd)}>{errorCount}</Button> : 0}</span>
             },
             {
                 title: '最大响应时间/毫秒',
                 dataIndex: 'maxCost',
+                width: 160
             },
             {
                 title: '平均响应时间/毫秒',
                 dataIndex: 'avgCost',
+                width: 160
             },
             {
                 title: '开始时间',
                 dataIndex: 'beginTime',
+                width: 160,
                 render: beginTime =>
                     <span>{moment(beginTime).format('YYYY-MM-DD HH:mm:ss')}</span>
             },
             {
                 title: '结束时间',
                 dataIndex: 'endTime',
+                width: 160,
                 render: endTime =>
                     <span>{moment(endTime).format('YYYY-MM-DD HH:mm:ss')}</span>
             },
@@ -148,12 +162,13 @@ class NetData extends React.Component {
         return (
             <div className="netDataPage">
                 <div className="searchBox">
-                    <Input className="searchItem searchInput" allowClear placeholder="请输入" onChange={this.changeNetKey} value={this.state.netKey} />
+                    <Input className="searchItem searchInput" allowClear placeholder="请输入" onPressEnter={this.searchNetKey} onChange={this.changeNetKey} value={this.state.netKey} />
                     <RangePicker className="searchItem" allowClear onChange={this.changeDataPicker} format={dateFormat} />
                     <Button className="searchItem" icon="search" type="primary" onClick={this.searchNetKey}>搜索</Button>
                 </div>
-                <Table rowKey="id" bordered columns={columns} dataSource={netData} pagination={false} />
+                <Table rowKey="id" bordered columns={columns} dataSource={netData} scroll={{ x: 1560 }} pagination={false} />
                 {pageTotal > 0 && <Pagination
+                    current={pageNum}
                     defaultCurrent={pageNum}
                     pageSize={pageSize}
                     total={pageTotal}
@@ -165,18 +180,15 @@ class NetData extends React.Component {
                 <Modal
                     title="错误日志"
                     className="netDataModalBox"
-                    width="720px"
+                    width="920px"
                     visible={showLog}
                     onCancel={this.handleCancel}
                     footer={[<Button key="back" onClick={this.handleCancel}>返回</Button>]}
                 >
-                    {showLog === true && <div className="errorLogBox">
-                        {errData.map(en => {
-                            return (
-                            <div className="itemBox" key={en}>{en}</div>
-                            )
-                        })}
-                    </div>}
+                    <div className="errorLogBox">
+                        {errData}
+                            {/* <div className="itemBox" dangerouslySetInnerHTML={{ __html: errData ? errData : null }}></div> */}
+                    </div>
                 </Modal>
             </div>
         )

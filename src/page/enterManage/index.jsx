@@ -12,7 +12,7 @@ class EnterManage extends React.Component {
         super(props)
         this.state = {
             appkey: '',
-            searchState: false,
+            // searchState: false,
             pageSize: 10,
             pageNum: 1,
             pageTotal: 0,
@@ -49,7 +49,7 @@ class EnterManage extends React.Component {
             mebFormType: 'edit',
             editMebVisible: true,
         })
-        this.refs.mebModalRef.setMebFormData(data)
+        // this.refs.mebModalRef.setMebFormData(data)
     }
     // 展示公私钥对话框
     showPubKeyFn(data) {
@@ -62,16 +62,17 @@ class EnterManage extends React.Component {
     changeKey(e) {
         this.setState({
             appkey: e.target.value,
-            searchState: true
+            // searchState: true
         })
     }
     searchTabKey() {
-        if (this.state.searchState) {
+        // if (this.state.searchState) {
             this.setState({
+                pageNum: 1,
                 appkey: this.state.appkey.trim()
-            })
-            this.getDataFn()
-        }
+            }, () => this.getDataFn())
+            
+        // }
     }
     // 改变页码数
     changePageNum(page) {
@@ -111,7 +112,7 @@ class EnterManage extends React.Component {
                 this.setState({
                     tabList: res.data.rows,
                     pageTotal: res.data.total,
-                    searchState: false
+                    // searchState: false
                 })
             }
         })
@@ -132,26 +133,27 @@ class EnterManage extends React.Component {
             {
                 title: 'appKey',
                 dataIndex: 'appKey',
-                width: '18%',
-                ellipsis: true
+                width: 300,
+                ellipsis: true,
+                fixed: 'left',
             },
             {
                 title: 'secret',
                 dataIndex: 'secret',
-                width: '18%',
-                ellipsis: true
+                width: 280,
+                ellipsis: true,
             },
             {
                 title: '角色',
                 dataIndex: 'roleList',
-                width: '18%',
-                ellipsis: true,
+                width: 400,
+                // ellipsis: true,
                 render: roleList => (
-                    <span>
+                    <span className='roleListBox'>
                         {roleList.map(item => {
                             return (
                                 <Tag color="green" key={item.id}>
-                                    {item.description}
+                                    {item.roleCode} ({item.description})
                                 </Tag>
                             );
                         })}
@@ -161,27 +163,26 @@ class EnterManage extends React.Component {
             {
                 title: '添加时间',
                 dataIndex: 'gmtCreate',
-                width: '13%',
+                width: 240,
                 ellipsis: true,
                 render: gmtCreate => {
                     return <span>{moment(gmtCreate).format('YYYY-MM-DD HH:mm:ss')}</span>
                 }
             },
-            {
-                title: '公钥/私钥',
-                dataIndex: 'pubKey',
-                width: '10%',
-                render: (pubKey, reocrd) => {
-                    let state = pubKey.length > 0 ? true : false
-                    return (<span>{state
-                        ? <span onClick={this.showPubKeyFn.bind(this, reocrd)} style={{ color: '#40a9ff', cursor: 'pointer' }}>查看</span>
-                        : '未设置'}</span>)
-                }
-            },
+            // {
+            //     title: '公钥/私钥',
+            //     dataIndex: 'pubKey',
+            //     width: '10%',
+            //     render: (pubKey, reocrd) => {
+            //         let state = pubKey.length > 0 ? true : false
+            //         return (<span>{state
+            //             ? <span onClick={this.showPubKeyFn.bind(this, reocrd)} style={{ color: '#40a9ff', cursor: 'pointer' }}>查看</span>
+            //             : '未设置'}</span>)
+            //     }
+            // },
             {
                 title: '状态',
                 dataIndex: 'status',
-                width: '10%',
                 render: status => {
                     let color = status === 0 ? '#87d068' : '#f50'
                     return (<Tag color={color}>{status === 0 ? '启用' : '禁用'}</Tag>)
@@ -190,6 +191,8 @@ class EnterManage extends React.Component {
             {
                 title: '操作',
                 key: 'action',
+                width: 200,
+                fixed: 'right',
                 render: (reocrd) =>
                     tabList.length > 0 ? (
                         <span>
@@ -202,29 +205,28 @@ class EnterManage extends React.Component {
         return (
             <div className="enterManagePage">
                 <div className="searchBox">
-                    <Input placeholder="请输入appKey" allowClear onChange={this.changeKey} value={this.state.appkey} />
+                    <Input placeholder="请输入appKey" allowClear onPressEnter={this.searchTabKey} onChange={this.changeKey} value={this.state.appkey} />
                     <Button type="primary" icon="search" onClick={this.searchTabKey}>搜索</Button>
                     <Button type="primary" icon="edit" onClick={this.addEnterMeb}>添加</Button>
                 </div>
-                <AddMeb
+                {addMebVisible && <AddMeb
                     match={this.props.match}
                     mebFormType={mebFormType}
                     addMebVisible={addMebVisible}
                     roleList={roleList}
-                    closeModel={this.closeModel}
-                    ref="mebModalRef" />       
+                    closeModel={this.closeModel} />}
                 <ShowKey showKeyData={showKeyData} showKeyVisible={showKeyVisible} closeModel={this.closeModel} />
-                <EditMeb
+                {editMebVisible && <EditMeb
                     match={this.props.match}
                     mebFormType={mebFormType}
                     editMebVisible={editMebVisible}
                     roleList={roleList}
                     editForm={editForm}
-                    closeModel={this.closeModel}
-                    ref="mebModalRef" />
-                <Table rowKey="id" bordered columns={columns} dataSource={tabList} pagination={false} />
+                    closeModel={this.closeModel} />}
+                <Table rowKey="id" bordered columns={columns} dataSource={tabList} pagination={false} scroll={{ x: 1520 }} />
                 {pageTotal > 0 && <div className="pageBox">
                     <Pagination
+                        current={pageNum}
                         defaultCurrent={pageNum}
                         pageSize={pageSize}
                         total={pageTotal}
