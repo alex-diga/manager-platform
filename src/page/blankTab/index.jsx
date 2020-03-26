@@ -14,7 +14,7 @@ class BlankTab extends React.Component {
 	}
 	setLabel(index) {
 		let l = this.state.num
-		if(l <= 60) {
+		if (l <= 60) {
 			return true
 		} else {
 			if (l < 360) {
@@ -28,34 +28,62 @@ class BlankTab extends React.Component {
 			}
 		}
 	}
-	setXArr() {
-		let l = this.state.num
-		let factor = 1
-		let len = 60
-		let i = 0
+	setXArr(type, unit) {
+		// let l = this.state.num
+		let l = type === 'real' ? 60 : this.state.yArr.length
+		// console.log(Math.ceil(Math.log(Math.ceil(l / unit)) / Math.log(2)))
+		// let len = this.state.num
+		// let constant = len > 3600 ? 3600 :len > 60 ? 60 : 1
+		// console.log(constant)
 		let arr = []
-		if(l <= 60) {
-			factor = 1
-			len = 60
+		let i = 0
+		if (l <= unit) {
+			for (i = 0; i <= unit; i++) {
+				arr.push(i)
+			}
 		} else {
-			if (l < 360) {
-				factor = 60
-				len = 360
-			} else {
-				if (l < 3600) {
-					factor = 360
-					len = 3600
-				} else {
-					factor = 3600
-					len = 86400
-				}
+			// let coef = Math.ceil(l / unit)
+			let coef = Math.pow(2, Math.ceil(Math.log(Math.ceil(l / unit)) / Math.log(2)))
+			while (i <= coef * unit) {
+				arr.push(i)
+				i += coef
 			}
 		}
-		while (i <= len) {
-            arr.push(i/factor)
-            i++
-		}
+		// console.log(arr)
 		return arr
+	}
+	setYArr(arr, unit) {
+		// arr.length > 10 && console.log(arr.length)
+		let result = []
+		if (arr.length <= unit) {
+			result = arr
+		} else {
+			// let coef = Math.ceil(arr.length / unit)
+			let coef = Math.pow(2, Math.ceil(Math.log(Math.ceil(arr.length / unit)) / Math.log(2)))
+			for (let i = 0; i <= arr.length; i += coef) {
+				let sum = 0
+				for (let j = 0; j < coef; j++) {
+					if (i + j < arr.length) {
+						sum += arr[i + j]
+					}
+				}
+				sum = sum / coef
+				result.push(sum)
+			}
+			if ((arr.length % coef) > 1) {
+				result.pop()
+				let sum = 0
+				for (let j = arr.length - 1; j > arr.length - (arr.length % coef); j--) {
+					sum += arr[j]
+				}
+				result.push(sum / (arr.length % coef))
+			} else {
+				result.pop()
+				result.push(arr[arr.length-1])
+			}
+		}
+		// console.log(arr.length, result.length)
+		return result
 	}
 	getOption(len, x, y) {
 		return {
@@ -83,7 +111,7 @@ class BlankTab extends React.Component {
 				},
 				axisLabel: {
 					show: true,
-					interval: index => this.setLabel(index)
+					// interval: index => this.setLabel(index)
 				},
 				splitLine: {
 					show: true,
@@ -113,16 +141,50 @@ class BlankTab extends React.Component {
 	}
 	setOption() {
 		let num = this.state.num + 1
-		let xArr = this.setXArr(num)
+		let xArr = this.setXArr('all', 10)
 		let yArr = JSON.parse(JSON.stringify(this.state.yArr))
-		yArr.push(Math.ceil(Math.random()*1000))
+		yArr.push(Math.ceil(Math.random() * 100))
+		let arr = this.setYArr(yArr, 10)
 		this.setState({
 			num: num,
 			yArr: yArr,
-			echartsOption: this.getOption(num, xArr, yArr)
+			echartsOption: this.getOption(num, xArr, arr)
 		})
 	}
+	init() {
+		// 冒泡排序
+		let arr = [145, 248, 31, 45, 9, 11, 145, 300];
+		function arrSort(arr) {
+			for (let i = 0; i < arr.length - 1; i++) {
+				for (let j = i + 1; j < arr.length; j++) {
+					if (arr[i] > arr[j]) {
+						let tmp = arr[i]
+						arr[i] = arr[j]
+						arr[j] = tmp
+					}
+				}
+			}
+			return arr
+		}
+		// 插入排序
+		function arrSort1(arr) {
+			for (let i = 1; i < arr.length; i++) {
+				let j = i - 1
+				let key = arr[i]
+				while (j >= 0 && arr[j] > key) {
+					arr[j + 1] = arr[j]
+					j--
+				}
+				arr[j + 1] = key
+			}
+			return arr
+		}
+		console.log(arrSort(arr))
+		console.log(arrSort1(arr))
+	}
 	componentDidMount() {
+		// this.init()
+		// this.setYArr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 10)
 		document.title = this.props.location.search.split('?')[1]
 		this.timer = setInterval(this.setOption.bind(this), 1000)
 	}
@@ -133,7 +195,7 @@ class BlankTab extends React.Component {
 		return (
 			<div className="noFoundPage">
 				另外打开的一个tab页面
-				<ReactEcharts style={{ height: '500px' }} option={this.state.echartsOption} />
+				<ReactEcharts style={{ height: '500px', width: '50%' }} option={this.state.echartsOption} />
 			</div>
 		)
 	}
